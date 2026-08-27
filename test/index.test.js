@@ -79,7 +79,7 @@ describe('index module - plugin lifecycle, slots, and hooks', () => {
 
   describe('hooks', () => {
     it('handles onLogin, onAppReady, and onWindowFocus gracefully', async () => {
-      const syncSpy = vi
+      const _syncSpy = vi
         .spyOn(syncEngine, 'sync')
         .mockResolvedValue({ created: 0, updated: 0, deleted: 0 });
 
