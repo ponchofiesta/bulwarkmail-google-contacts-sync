@@ -70,7 +70,7 @@ async function triggerBackgroundSync(api, reason) {
 
 export async function activate(api) {
   api.log.info('Google Contacts Sync plugin activated');
-  triggerBackgroundSync(api, 'app_start').catch(() => { });
+  triggerBackgroundSync(api, 'app_start').catch(() => {});
 }
 export const slots = {
   'settings-section': {
@@ -92,17 +92,17 @@ export const hooks = {
   // When user logs in, trigger sync if syncOnLogin is enabled.
   onLogin: () => {
     const api = getPluginHostApi();
-    if (api) triggerBackgroundSync(api, 'login').catch(() => { });
+    if (api) triggerBackgroundSync(api, 'login').catch(() => {});
   },
   // When app becomes ready, trigger sync if syncPeriodically is enabled.
   onAppReady: () => {
     const api = getPluginHostApi();
-    if (api) triggerBackgroundSync(api, 'app_start').catch(() => { });
+    if (api) triggerBackgroundSync(api, 'app_start').catch(() => {});
   },
   // Periodical sync check triggered when browser window receives focus.
   onWindowFocus: () => {
     const api = getPluginHostApi();
-    if (api) triggerBackgroundSync(api, 'window_focus').catch(() => { });
+    if (api) triggerBackgroundSync(api, 'window_focus').catch(() => {});
   },
   // The host fires this (via authHooks.onOAuthCallback) when the generic
   // OAuth callback landing page receives the provider redirect. Validate

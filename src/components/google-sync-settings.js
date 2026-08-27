@@ -651,17 +651,17 @@ function GoogleSyncSettings({ api }) {
   };
 
   const bannerStyle = {
-    fontSize: "0.875rem",
-    lineHeight: "1.25rem",
-    borderRadius: "0.375rem",
-    padding: "0.5rem 0.75rem",
+    fontSize: '0.875rem',
+    lineHeight: '1.25rem',
+    borderRadius: '0.375rem',
+    padding: '0.5rem 0.75rem',
   };
   const bannerSuccess = {
-    backgroundColor: "#ecfdf5",
-    color: "#047857",
-    "@media (prefers-color-scheme: dark)": {
-      backgroundColor: "rgb(2 44 34 / 30%)",
-      color: "#6ee7b7",
+    backgroundColor: '#ecfdf5',
+    color: '#047857',
+    '@media (prefers-color-scheme: dark)': {
+      backgroundColor: 'rgb(2 44 34 / 30%)',
+      color: '#6ee7b7',
     },
   };
   const bannerError = {
@@ -738,39 +738,39 @@ function GoogleSyncSettings({ api }) {
             'div',
             { style: controlsRow },
             !connected &&
-            !connecting &&
-            h(
-              'button',
-              {
-                type: 'button',
-                className: 'btn-g-primary',
-                onClick: handleConnect,
-              },
-              renderIcon('link'),
-              'Connect Google Account'
-            ),
+              !connecting &&
+              h(
+                'button',
+                {
+                  type: 'button',
+                  className: 'btn-g-primary',
+                  onClick: handleConnect,
+                },
+                renderIcon('link'),
+                'Connect Google Account'
+              ),
             connecting &&
-            h(
-              'button',
-              {
-                type: 'button',
-                className: 'btn-g-secondary',
-                onClick: cancelConnect,
-              },
-              'Cancel'
-            ),
+              h(
+                'button',
+                {
+                  type: 'button',
+                  className: 'btn-g-secondary',
+                  onClick: cancelConnect,
+                },
+                'Cancel'
+              ),
             connected &&
-            h(
-              'button',
-              {
-                type: 'button',
-                className: `btn-g-destructive ${syncing ? 'btn-disabled' : ''}`,
-                onClick: handleDisconnect,
-                disabled: syncing,
-              },
-              renderIcon('disconnect'),
-              'Disconnect'
-            )
+              h(
+                'button',
+                {
+                  type: 'button',
+                  className: `btn-g-destructive ${syncing ? 'btn-disabled' : ''}`,
+                  onClick: handleDisconnect,
+                  disabled: syncing,
+                },
+                renderIcon('disconnect'),
+                'Disconnect'
+              )
           )
         )
       ),
