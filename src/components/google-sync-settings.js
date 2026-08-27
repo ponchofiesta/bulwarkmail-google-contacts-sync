@@ -650,20 +650,21 @@ function GoogleSyncSettings({ api }) {
     return h('span', { style: badgeContainer }, iconEl, statusEl);
   };
 
-  const bannerSuccess = {
-    fontSize: '0.875rem',
-    lineHeight: '1.25rem',
-    borderRadius: '0.375rem',
-    padding: '0.5rem 0.75rem',
-    background: 'color-mix(in srgb, var(--color-success, #10b981) 15%, transparent)',
-    color: 'var(--color-success, #047857)',
+  const bannerStyle = {
+    fontSize: "0.875rem",
+    lineHeight: "1.25rem",
+    borderRadius: "0.375rem",
+    padding: "0.5rem 0.75rem",
   };
-
+  const bannerSuccess = {
+    backgroundColor: "#ecfdf5",
+    color: "#047857",
+    "@media (prefers-color-scheme: dark)": {
+      backgroundColor: "rgb(2 44 34 / 30%)",
+      color: "#6ee7b7",
+    },
+  };
   const bannerError = {
-    fontSize: '0.875rem',
-    lineHeight: '1.25rem',
-    borderRadius: '0.375rem',
-    padding: '0.5rem 0.75rem',
     background: 'color-mix(in srgb, var(--color-destructive, #ef4444) 15%, transparent)',
     color: 'var(--color-destructive, #b91c1c)',
   };
@@ -697,8 +698,8 @@ function GoogleSyncSettings({ api }) {
     ),
 
     // Feedback banner (success / info / error)
-    statusMessage && h('div', { style: bannerSuccess }, statusMessage),
-    error && h('div', { style: bannerError }, error),
+    statusMessage && h('div', { style: { ...bannerStyle, ...bannerSuccess } }, statusMessage),
+    error && h('div', { style: { ...bannerStyle, ...bannerError } }, error),
 
     // Card 1: Account Status & Connection
     h(
@@ -737,39 +738,39 @@ function GoogleSyncSettings({ api }) {
             'div',
             { style: controlsRow },
             !connected &&
-              !connecting &&
-              h(
-                'button',
-                {
-                  type: 'button',
-                  className: 'btn-g-primary',
-                  onClick: handleConnect,
-                },
-                renderIcon('link'),
-                'Connect Google Account'
-              ),
+            !connecting &&
+            h(
+              'button',
+              {
+                type: 'button',
+                className: 'btn-g-primary',
+                onClick: handleConnect,
+              },
+              renderIcon('link'),
+              'Connect Google Account'
+            ),
             connecting &&
-              h(
-                'button',
-                {
-                  type: 'button',
-                  className: 'btn-g-secondary',
-                  onClick: cancelConnect,
-                },
-                'Cancel'
-              ),
+            h(
+              'button',
+              {
+                type: 'button',
+                className: 'btn-g-secondary',
+                onClick: cancelConnect,
+              },
+              'Cancel'
+            ),
             connected &&
-              h(
-                'button',
-                {
-                  type: 'button',
-                  className: `btn-g-destructive ${syncing ? 'btn-disabled' : ''}`,
-                  onClick: handleDisconnect,
-                  disabled: syncing,
-                },
-                renderIcon('disconnect'),
-                'Disconnect'
-              )
+            h(
+              'button',
+              {
+                type: 'button',
+                className: `btn-g-destructive ${syncing ? 'btn-disabled' : ''}`,
+                onClick: handleDisconnect,
+                disabled: syncing,
+              },
+              renderIcon('disconnect'),
+              'Disconnect'
+            )
           )
         )
       ),
