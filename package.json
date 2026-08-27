@@ -1,0 +1,26 @@
+{
+  "name": "bulwark-plugin-google-contacts-sync",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "esbuild src/index.js --bundle --format=cjs --platform=browser --charset=utf8 --outfile=dist/index.js --external:react --external:react-dom --external:react-dom/client --external:react/jsx-runtime --external:@plugin-host",
+    "dev": "esbuild src/index.js --bundle --format=cjs --platform=browser --charset=utf8 --outfile=dist/index.js --external:react --external:react-dom --external:react-dom/client --external:react/jsx-runtime --external:@plugin-host --watch",
+    "package": "npm run build && cp manifest.json dist/ && cd dist && zip -X ../google-contacts-sync.zip manifest.json index.js",
+    "lint": "biome lint .",
+    "lint:fix": "biome lint . --write",
+    "format": "biome format --write .",
+    "check": "biome check .",
+    "check:fix": "biome check --write .",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.10",
+    "@testing-library/react": "^16.3.2",
+    "@types/node": "^24.0",
+    "@types/react": "^19.2.18",
+    "esbuild": "^0.28.2",
+    "jsdom": "^30.0.1",
+    "vitest": "^4.1.11"
+  }
+}

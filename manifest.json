@@ -1,0 +1,71 @@
+{
+  "id": "google-contacts-sync",
+  "name": "Google Contacts Sync",
+  "version": "1.0.0",
+  "description": "One-way sync of your Google Contacts into the 'Google Contacts' address book.",
+  "type": "ui-extension",
+  "tier": "privileged",
+  "author": "Michael Richter",
+  "license": "MIT",
+  "permissions": [
+    "contacts:read",
+    "contacts:write",
+    "http:fetch",
+    "ui:settings-section",
+    "admin:config",
+    "crypto:full"
+  ],
+  "entrypoint": "index.js",
+  "minAppVersion": "1.7.0",
+  "httpOrigins": ["https://oauth2.googleapis.com", "https://people.googleapis.com"],
+  "configSchema": {
+    "clientId": {
+      "type": "string",
+      "label": "Google OAuth Client ID",
+      "description": "Deployment-wide OAuth client for the whole server. Registered once in Google Cloud Console with the redirect URI <origin>/<locale>/plugins/oauth/callback. All users share this client; each authorizes their own Google account.",
+      "placeholder": "1234567890-xxxx.apps.googleusercontent.com",
+      "required": true
+    },
+    "clientSecret": {
+      "type": "string",
+      "label": "Google OAuth Client Secret",
+      "description": "OAuth client secret for Google 'Web application' client ID.",
+      "placeholder": "GOCSPX-xxxx",
+      "required": true
+    }
+  },
+  "settingsSchema": {
+    "addressBookName": {
+      "type": "string",
+      "label": "Address book name",
+      "description": "Name of the address book where Google Contacts are synced.",
+      "default": "Google Contacts"
+    },
+    "syncOnLogin": {
+      "type": "boolean",
+      "label": "Sync contacts on login",
+      "description": "Automatically sync contacts when you login.",
+      "default": true
+    },
+    "syncPeriodically": {
+      "type": "boolean",
+      "label": "Sync contacts periodically",
+      "description": "Sync runs on app start and window focus.",
+      "default": true
+    },
+    "syncIntervalMinutes": {
+      "type": "number",
+      "label": "Minimum minutes between automatic syncs",
+      "description": "Sync runs at most once per this interval.",
+      "default": 15,
+      "min": 5,
+      "max": 1440
+    },
+    "showToasts": {
+      "type": "boolean",
+      "label": "Show toast notifications",
+      "description": "Show toast messages when sync starts and completes.",
+      "default": true
+    }
+  }
+}
