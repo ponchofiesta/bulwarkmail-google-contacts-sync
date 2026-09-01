@@ -15,8 +15,12 @@ src/components/google-sync-settings.js   # settings-section UI
 ## Bundling & Development Notes
 
 The multi-file CommonJS source is bundled on demand: in dev mode Bulwark runs
-esbuild on `src/<entrypoint>` (CJS, externalising `react*` / `@plugin-host`),
+Bun on `src/<entrypoint>` (CJS, externalising `react*` / `@plugin-host`),
 so editing any file under `src/` and refreshing the browser is enough.
+
+Toolchain: Bun 1.4 (via mise). Use `bun install`, `bun run build`,
+`bun test` (tests use `bun:test`; happy-dom is set up via `test/dom-preload.js`
+configured in `bunfig.toml`).
 
 ## Component Overview
 

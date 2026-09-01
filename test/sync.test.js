@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'bun:test';
 import { ADDRESS_BOOK_NAME, ensureAddressBook, shouldAutoSync, sync } from '../src/sync';
 
 describe('sync module', () => {

@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'bun:test';
 import { activate, hooks, slots } from '../src/index';
 import * as oauth from '../src/oauth';
 import * as syncEngine from '../src/sync';

@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowJs": true,
+    "checkJs": false,
+    "noEmit": true,
+    "types": ["bun-types"],
+    "paths": {
+      "@plugin-host": ["./test/__mocks__/plugin-host.js"]
+    }
+  },
+  "include": ["src", "test"]
+}
