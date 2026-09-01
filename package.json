@@ -5,7 +5,9 @@
   "scripts": {
     "build": "bun build src/index.js --bundle --format=cjs --platform=browser --charset=utf8 --outfile=dist/index.js --external react --external react-dom --external react-dom/client --external react/jsx-runtime --external @plugin-host",
     "dev": "bun --watch build src/index.js --bundle --format=cjs --platform=browser --charset=utf8 --outfile=dist/index.js --external react --external react-dom --external react-dom/client --external react/jsx-runtime --external @plugin-host",
-    "package": "bun run build && cp manifest.json dist/ && cd dist && zip -X ../google-contacts-sync.zip manifest.json index.js",
+    "package": "bun run scripts/package.js",
+    "clean": "bun run scripts/clean.js",
+    "clean:all": "bun run scripts/clean.js && bun run scripts/clean-node-modules.js",
     "lint": "biome lint .",
     "lint:fix": "biome lint . --write",
     "format": "biome format --write .",
@@ -18,6 +20,7 @@
     "@biomejs/biome": "2.5.11",
     "@testing-library/react": "^16.3.3",
     "@types/react": "^19.2.18",
+    "fflate": "^0.8.3",
     "happy-dom": "^20.12.0"
   }
 }
