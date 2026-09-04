@@ -44,19 +44,24 @@ async function fetchConnections(api, accessToken, syncToken) {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
 
-    if (res.status === 410) {
-      // syncToken expired — caller must do a full resync
-      const err = new Error('SYNC_TOKEN_EXPIRED');
-      err.code = 'SYNC_TOKEN_EXPIRED';
-      throw err;
-    }
     if (res.status === 401) {
       const err = new Error('UNAUTHORIZED');
       err.code = 'UNAUTHORIZED';
       throw err;
     }
     if (!res.ok) {
+      // syncToken expired: Google signals this with HTTP 410 (Gone) or HTTP 400
+      // with status FAILED_PRECONDITION ("Sync token is expired...").
+      // Either way the caller must do a full resync without the syncToken.
       const detail = res.bodyText ? res.bodyText.slice(0, 200) : '';
+      if (
+        res.status === 410 ||
+        (res.status === 400 && /Sync token is expired/i.test(res.bodyText || ''))
+      ) {
+        const err = new Error('SYNC_TOKEN_EXPIRED');
+        err.code = 'SYNC_TOKEN_EXPIRED';
+        throw err;
+      }
       throw new Error(`People API request failed (${res.status}) ${detail}`);
     }
 

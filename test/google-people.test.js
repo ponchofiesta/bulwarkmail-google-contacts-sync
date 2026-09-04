@@ -103,6 +103,44 @@ describe('google-people module', () => {
       });
     });
 
+    it('throws SYNC_TOKEN_EXPIRED error when Google returns 400 FAILED_PRECONDITION with expired sync token', async () => {
+      mockApi.http.fetch.mockResolvedValueOnce({
+        ok: false,
+        status: 400,
+        bodyText: JSON.stringify({
+          error: {
+            code: 400,
+            message:
+              'Sync token is expired. Clear local cache and retry call without the sync token.',
+            status: 'FAILED_PRECONDITION',
+          },
+        }),
+      });
+
+      await expect(fetchConnections(mockApi, 'token', 'expired-token')).rejects.toMatchObject({
+        message: 'SYNC_TOKEN_EXPIRED',
+        code: 'SYNC_TOKEN_EXPIRED',
+      });
+    });
+
+    it('does not treat other 400 FAILED_PRECONDITION errors as expired sync token', async () => {
+      mockApi.http.fetch.mockResolvedValueOnce({
+        ok: false,
+        status: 400,
+        bodyText: JSON.stringify({
+          error: {
+            code: 400,
+            message: 'Some other precondition failure.',
+            status: 'FAILED_PRECONDITION',
+          },
+        }),
+      });
+
+      await expect(fetchConnections(mockApi, 'token', 'some-token')).rejects.toThrow(
+        /People API request failed \(400\)/
+      );
+    });
+
     it('throws UNAUTHORIZED error when Google returns 401', async () => {
       mockApi.http.fetch.mockResolvedValueOnce({
         ok: false,
