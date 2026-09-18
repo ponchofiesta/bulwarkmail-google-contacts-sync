@@ -1,0 +1,7 @@
+# Lefthook configuration — https://lefthook.dev/configuration/
+pre-commit:
+  commands:
+    biome:
+      glob: "*.{js,jsx,ts,tsx,json,jsonc,css,graphql}"
+      run: bunx biome check --write {staged_files}
+      stage_fixed: true
