@@ -4,7 +4,6 @@
   "version": "1.0.0",
   "description": "One-way sync of your Google Contacts into the 'Google Contacts' address book.",
   "type": "ui-extension",
-  "tier": "privileged",
   "author": "Michael Richter",
   "license": "MIT",
   "permissions": [
@@ -12,11 +11,10 @@
     "contacts:write",
     "http:fetch",
     "ui:settings-section",
-    "admin:config",
-    "crypto:full"
+    "admin:config"
   ],
   "entrypoint": "index.js",
-  "minAppVersion": "1.7.0",
+  "minAppVersion": "1.10.0",
   "httpOrigins": ["https://oauth2.googleapis.com", "https://people.googleapis.com"],
   "configSchema": {
     "clientId": {
