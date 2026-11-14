@@ -61,15 +61,33 @@ async function upsertContact(api, bookId, card, existingContactsByUid = null) {
   }
 }
 
+let inflight = null;
+
 /**
- * Run one sync pass.
+ * Run one sync pass. Single-flight: while a pass is running, incremental
+ * requests join it; full requests run once it settles.
  *
  * @param {object} api            plugin host API
  * @param {string} clientId       Google OAuth client id
  * @param {object} opts           { full: boolean } — force a full resync
  * @returns {Promise<{created:number, updated:number, deleted:number}>}
  */
-async function sync(api, clientId, opts = {}) {
+function sync(api, clientId, opts = {}) {
+  if (inflight) {
+    if (opts.full !== true) return inflight;
+    return inflight.catch(() => {}).then(() => sync(api, clientId, opts));
+  }
+  inflight = runSync(api, clientId, opts).finally(() => {
+    inflight = null;
+  });
+  return inflight;
+}
+
+function isSyncInProgress() {
+  return inflight !== null;
+}
+
+async function runSync(api, clientId, opts = {}) {
   const forceFull = opts.full === true;
   const storedSyncToken = forceFull ? null : await api.storage.get('syncToken');
   const idMap = (await api.storage.get('idMap')) || {};
@@ -132,7 +150,7 @@ async function sync(api, clientId, opts = {}) {
     if (err.code === 'SYNC_TOKEN_EXPIRED') {
       // Token expired — retry as a full sync (which also re-runs deletion diff)
       await api.storage.remove('syncToken');
-      return sync(api, clientId, { full: true, clientSecret: opts.clientSecret });
+      return runSync(api, clientId, { full: true, clientSecret: opts.clientSecret });
     }
     throw err;
   }
@@ -219,4 +237,4 @@ async function shouldAutoSync(api, intervalMinutes) {
   return Date.now() - last >= intervalMinutes * 60_000;
 }
 
-export { ADDRESS_BOOK_NAME, ensureAddressBook, shouldAutoSync, sync };
+export { ADDRESS_BOOK_NAME, ensureAddressBook, isSyncInProgress, shouldAutoSync, sync };

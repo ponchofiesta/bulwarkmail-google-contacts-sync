@@ -26,10 +26,7 @@ async function settings(api) {
   return { clientId, clientSecret, intervalMinutes, syncOnLogin, syncPeriodically, showToasts };
 }
 
-let isSyncing = false;
-
 async function triggerBackgroundSync(api, reason) {
-  if (isSyncing) return;
   try {
     const { clientId, clientSecret, intervalMinutes, syncOnLogin, syncPeriodically, showToasts } =
       await settings(api);
@@ -46,13 +43,17 @@ async function triggerBackgroundSync(api, reason) {
       if (!shouldSync) return;
     }
 
-    isSyncing = true;
+    // Check and start with no await in between: triggers fired together
+    // (activate + onAppReady + onLogin at startup) all pass the async checks
+    // above, so the in-progress guard must sit directly before the call.
+    if (syncEngine.isSyncInProgress()) return;
+    const pending = syncEngine.sync(api, clientId, { clientSecret });
     if (showToasts) {
       api.toast.info('Sync in progress…');
     }
 
     api.log.info(`Running background Google Contacts Sync (trigger: ${reason})`);
-    const result = await syncEngine.sync(api, clientId, { clientSecret });
+    const result = await pending;
     if (showToasts) {
       const doneMsg = `Google Contacts Sync complete: ${result.created} created, ${result.updated} updated, ${result.deleted} deleted`;
       api.toast.success(doneMsg);
@@ -63,8 +64,6 @@ async function triggerBackgroundSync(api, reason) {
     if (showToasts) {
       api.toast.error(`Google Contacts Sync failed: ${e.message || String(e)}`);
     }
-  } finally {
-    isSyncing = false;
   }
 }
 

@@ -1,5 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from 'bun:test';
-import { ADDRESS_BOOK_NAME, ensureAddressBook, shouldAutoSync, sync } from '../src/sync';
+import {
+  ADDRESS_BOOK_NAME,
+  ensureAddressBook,
+  isSyncInProgress,
+  shouldAutoSync,
+  sync,
+} from '../src/sync';
 
 describe('sync module', () => {
   let mockApi;
@@ -422,6 +428,55 @@ describe('sync module', () => {
 
       expect(result.created).toBe(1);
       expect(storageStore.idMap['people/c2']).toBe('recreated-c2');
+    });
+  });
+
+  describe('single-flight', () => {
+    beforeEach(() => {
+      storageStore['oauth.tokens'] = {
+        accessToken: 'valid-token',
+        expiresAt: Date.now() + 100_000,
+      };
+      mockApi.addressBooks.list.mockResolvedValue([{ id: 'book-google', name: 'Google Contacts' }]);
+      mockApi.http.fetch.mockResolvedValue({
+        ok: true,
+        status: 200,
+        bodyText: JSON.stringify({
+          connections: [{ resourceName: 'people/c1', names: [{ displayName: 'Alice' }] }],
+          nextSyncToken: 'tok',
+        }),
+      });
+    });
+
+    it('joins concurrent incremental calls into one pass', async () => {
+      const a = sync(mockApi, 'client-id-1');
+      const b = sync(mockApi, 'client-id-1');
+      expect(isSyncInProgress()).toBe(true);
+      const [ra, rb] = await Promise.all([a, b]);
+
+      expect(ra).toBe(rb);
+      expect(mockApi.http.fetch).toHaveBeenCalledTimes(1);
+      expect(mockApi.contacts.create).toHaveBeenCalledTimes(1);
+      expect(isSyncInProgress()).toBe(false);
+    });
+
+    it('runs a full request after the in-flight pass instead of overlapping it', async () => {
+      const localContacts = [];
+      mockApi.contacts.list.mockImplementation(async () => [...localContacts]);
+      mockApi.contacts.create.mockImplementation(async (card) => {
+        const contact = { id: `local-${card.uid}`, uid: card.uid };
+        localContacts.push(contact);
+        return contact;
+      });
+
+      const a = sync(mockApi, 'client-id-1');
+      const b = sync(mockApi, 'client-id-1', { full: true });
+      await Promise.all([a, b]);
+
+      expect(mockApi.http.fetch).toHaveBeenCalledTimes(2);
+      // Second pass sees the first pass's idMap and updates instead of creating.
+      expect(mockApi.contacts.create).toHaveBeenCalledTimes(1);
+      expect(mockApi.contacts.update).toHaveBeenCalledTimes(1);
     });
   });
 });
